@@ -1,8 +1,8 @@
 import os
 
 #pygame window width and height
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1366
+SCREEN_HEIGHT = 768
 
 SIZE =  4
 

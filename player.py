@@ -72,7 +72,10 @@ class Player:
         self.y = y
         self.health = 100
         self.frameCounter = -1
+        self.jumpMax = 20
+        self.jumpVel = self.jumpMax
         self.dir = 'right'
+        self.jump = False
         self.action = 'idle'
         self.lastAction = 'idle' #used to detect a change in action
     def update(self, win):

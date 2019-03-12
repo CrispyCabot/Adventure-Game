@@ -1,5 +1,5 @@
 import pygame
-from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE
+from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE
 import os
 import time
 
@@ -8,7 +8,7 @@ from player import Player
 
 pygame.init()
 
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) #,pygame.FULLSCREEN
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN) #,pygame.FULLSCREEN
 pygame.display.set_caption('blablksdjfkl')
 
 clock = pygame.time.Clock()
@@ -42,19 +42,36 @@ def main():
         if screen == 'gameScreen':
 
             keys = pygame.key.get_pressed()
+            if keys[K_ESCAPE]:
+                playing = False
             player.action = 'idle'
-            if keys[K_SPACE]:
-                player.action = 'slash'
+            if not player.jump:
+                if keys[K_SPACE]:
+                    player.action = 'slash'
+                else:
+                    if keys[K_UP]:
+                        player.jump = True
+                        player.y -= player.jumpVel
+                        player.jumpVel -= 1
+                        player.action = 'longJump'
+                        if player.jumpVel <  -player.jumpMax:
+                            player.jumpVel = player.jumpMax
+                            player.jump = False
+                    if keys[K_RIGHT] and not keys[K_LEFT]:
+                        player.x += 10
+                        player.action = 'run'
+                        player.dir = 'right'
+                    if keys[K_LEFT] and not keys[K_RIGHT]:
+                        player.x -= 10
+                        player.action = 'run'
+                        player.dir = 'left'
             else:
-                if keys[K_RIGHT] and not keys[K_LEFT]:
-                    player.x += 10
-                    player.action = 'run'
-                    player.dir = 'right'
-                if keys[K_LEFT] and not keys[K_RIGHT]:
-                    player.x -= 10
-                    player.action = 'run'
-                    player.dir = 'left'
-
+                player.y -= player.jumpVel
+                player.jumpVel -= 1
+                player.action = 'longJump'
+                if player.jumpVel <  -player.jumpMax:
+                    player.jumpVel = player.jumpMax
+                    player.jump = False
             drawGame(player)
 
 main()
