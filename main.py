@@ -11,6 +11,10 @@ pygame.init()
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN) #,pygame.FULLSCREEN
 pygame.display.set_caption('blablksdjfkl')
 
+bg = []
+for i in range(0, 54):
+    bg.append(pygame.transform.scale(pygame.image.load(PATH+os.path.join('data', 'bg', 'tile'+str(i)+'.png')), (SCREEN_WIDTH, SCREEN_HEIGHT)))
+
 clock = pygame.time.Clock()
 
 def loadSprite(folder, amt, char):
@@ -21,9 +25,10 @@ def loadSprite(folder, amt, char):
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
 
+def drawMain(frameCounter):
+    win.blit(bg[frameCounter], (0,0))
+
 def drawGame(player):
-    pygame.draw.rect(win, (0,0,0), pygame.Rect(0,0,SCREEN_WIDTH, SCREEN_HEIGHT)) #clear screen
-    #background
     player.update(win)
 
     pygame.display.update()
@@ -32,6 +37,7 @@ def main():
     playing = True
     screen = 'gameScreen'
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100)
+    frameCounter = 0
 
     while playing:
         clock.tick(20)
@@ -45,15 +51,31 @@ def main():
             if keys[K_ESCAPE]:
                 playing = False
             player.action = 'idle'
-            if not player.jump:
-                if keys[K_SPACE]:
-                    player.action = 'slash'
+            if keys[K_SPACE]:
+                player.action = 'slash'
+            else:
+                if player.jump:
+                    player.jump = True
+                    player.y -= player.jumpVel
+                    player.jumpVel -= 4
+                    player.action = 'longJump'
+                    if player.dir == 'left':
+                        player.x -= 10
+                    if player.dir == 'right':
+                        player.x += 10
+                    if player.jumpVel <  -player.jumpMax:
+                        player.jumpVel = player.jumpMax
+                        player.jump = False
                 else:
                     if keys[K_UP]:
                         player.jump = True
                         player.y -= player.jumpVel
-                        player.jumpVel -= 1
+                        player.jumpVel -= 4
                         player.action = 'longJump'
+                        if player.dir == 'left':
+                            player.x -= 10
+                        if player.dir == 'right':
+                            player.x += 10
                         if player.jumpVel <  -player.jumpMax:
                             player.jumpVel = player.jumpMax
                             player.jump = False
@@ -65,13 +87,10 @@ def main():
                         player.x -= 10
                         player.action = 'run'
                         player.dir = 'left'
-            else:
-                player.y -= player.jumpVel
-                player.jumpVel -= 1
-                player.action = 'longJump'
-                if player.jumpVel <  -player.jumpMax:
-                    player.jumpVel = player.jumpMax
-                    player.jump = False
+            drawMain(frameCounter)
+            frameCounter += 1
+            if frameCounter >= 54:
+                frameCounter = 0
             drawGame(player)
 
 main()
