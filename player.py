@@ -1,7 +1,7 @@
 import pygame
 import os
 from config import PATH, SIZE
-def loadSprite2(folder, amt, char): #Left images
+def loadSprite2(folder, amt, char): #Left images, flips them
     for i in range(0, amt):
         img = pygame.transform.flip(pygame.image.load(PATH +
                                 os.path.join('data', 'char', folder, 'tile00' + str(i)+'.png')), True, False)
@@ -66,13 +66,17 @@ charl = {
 loadR(charr)
 loadL(charl)
 
+width, height = charr['run'][0].get_rect().size
+
 class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.height = height
+        self.width = width
         self.health = 100
-        self.frameCounter = -1
-        self.jumpMax = 20
+        self.frameCounter = 0
+        self.jumpMax = 30
         self.jumpVel = self.jumpMax
         self.dir = 'right'
         self.jump = False
@@ -80,16 +84,16 @@ class Player:
         self.lastAction = 'idle' #used to detect a change in action
     def update(self, win):
         if self.action == self.lastAction:
-            self.frameCounter += 1
+            self.frameCounter += .3
         else:
             self.frameCounter = 0
             self.lastAction = self.action
         if self.frameCounter >= len(charr[self.action]):
-            self.frameCounter = -1
+            self.frameCounter = 0
         if self.dir == 'right':
-            img = charr[self.action][self.frameCounter]
+            img = charr[self.action][int(self.frameCounter)]
         elif self.dir == 'left':
-            img = charl[self.action][self.frameCounter]
+            img = charl[self.action][int(self.frameCounter)]
         pos = img.get_rect()
         pos.center = self.x, self.y #Center anchor
         win.blit(img, pos)
