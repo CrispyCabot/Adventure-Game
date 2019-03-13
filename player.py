@@ -72,6 +72,7 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.lastY = y
         self.height = height
         self.width = width
         self.health = 100

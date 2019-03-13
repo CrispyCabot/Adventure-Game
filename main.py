@@ -10,7 +10,7 @@ from ledge import Platform
 pygame.init()
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN) #,pygame.FULLSCREEN
-pygame.display.set_caption('blablksdjfkl')
+pygame.display.set_caption('cary is dumb')
 
 bg = []
 for i in range(0, 54):
@@ -40,9 +40,10 @@ def main():
     frameCounter = 0
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100)
-    platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+50, 100, 'floor'), 
+    platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'), 
                 Platform(100,SCREEN_HEIGHT-200,200,30, 'plat'),
-                Platform(100,SCREEN_HEIGHT-400,200,30, 'plat')
+                Platform(100,SCREEN_HEIGHT-400,200,30, 'plat'),
+                Platform(200, SCREEN_HEIGHT-200,200,30, 'plat')
                 ]
     playerSpeed = 10
 
@@ -53,7 +54,7 @@ def main():
                 playing = False
 
         if screen == 'gameScreen':
-
+            player.lastY = player.y
             keys = pygame.key.get_pressed()
             if keys[K_ESCAPE]:
                 playing = False
@@ -63,14 +64,11 @@ def main():
                 player.jumpVel -= 2
                 if player.jumpVel < 0:
                     for i in platforms:
-                        check, val = i.hit(player.x, player.y+player.height/2-10)
+                        check, val = i.hit(player.x, player.y+player.height/2-10, player.lastY)
                         if check:
-                            print('hit')
                             player.jump = False
                             player.y = val-player.height/2
                             player.jumpVel = player.jumpMax
-            if keys[K_SPACE]:
-                player.action = 'slash'
             if keys[K_UP] and not player.jump:
                 player.jump = True
                 player.y -= player.jumpVel
@@ -85,7 +83,7 @@ def main():
                 player.action = 'run'
                 player.dir = 'right'
                 for i in platforms:
-                    check, val = i.hit(player.x, player.y+player.height/2-10)
+                    check, val = i.hit(player.x, player.y+player.height/2-10, player.lastY)
                     if not(check) and not(player.jump):
                         player.jump = True
                         player.jumpVel = 0
@@ -96,10 +94,17 @@ def main():
                 player.action = 'run'
                 player.dir = 'left'
                 for i in platforms:
-                    check, val = i.hit(player.x, player.y+player.height/2-10)
+                    check, val = i.hit(player.x, player.y+player.height/2-10, player.lastY)
                     if not(check) and not(player.jump):
                         player.jump = True
                         player.jumpVel = 0
+            if keys[K_SPACE]:
+                player.action = 'slash'
+            if keys[K_DOWN] and not player.jump:
+                player.jump = True
+                player.jumpVel = 0
+                player.y += 10
+                player.lastY = player.y
             frameCounter += .5
             if frameCounter >= 54:
                 frameCounter = 0
