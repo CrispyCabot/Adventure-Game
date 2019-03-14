@@ -1,11 +1,13 @@
 import pygame
-from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE
+from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, \
+                            MOUSEBUTTONUP, QUIT
 import os
 import time
 
 from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH, SIZE
 from player import Player
 from ledge import Platform
+from enemy import Dog
 
 pygame.init()
 
@@ -26,11 +28,19 @@ def loadSprite(folder, amt, char):
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
 
-def drawGame(player, frameCounter, platforms):
+def drawGame(player, frameCounter, platforms, enemies, firstClick):
     win.blit(bg[frameCounter], (0,0))
     for i in platforms:
         i.update(win)
+    for i in enemies:
+        i.x += 5
+        i.update(win)
     player.update(win)
+    
+    if firstClick != 0:
+        x, y = firstClick
+        x2, y2 = pygame.mouse.get_pos()
+        pygame.draw.rect(win, (255,0,0), pygame.Rect(x, y, abs(x2-x), abs(y2-y)), 2)
 
     pygame.display.update()
 
@@ -41,17 +51,28 @@ def main():
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100)
     platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'), 
-                Platform(100,SCREEN_HEIGHT-200,200,30, 'plat'),
-                Platform(100,SCREEN_HEIGHT-400,200,30, 'plat'),
-                Platform(200, SCREEN_HEIGHT-200,200,30, 'plat')
+                Platform(100,SCREEN_HEIGHT-200,200,10, 'plat'),
+                Platform(100,SCREEN_HEIGHT-400,200,10, 'plat'),
+                Platform(400, SCREEN_HEIGHT-600, 200, 10, 'plat')
                 ]
+    enemies = [Dog(100,500)]
     playerSpeed = 10
+
+    firstClick = 0
 
     while playing:
         clock.tick(60)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == QUIT:
                 playing = False
+            if event.type == MOUSEBUTTONUP:
+                if firstClick == 0:
+                    firstClick = pygame.mouse.get_pos()
+                else:
+                    x, y = firstClick
+                    firstClick = 0
+                    x2, y2 = pygame.mouse.get_pos()
+                    platforms.append(Platform(x, y, abs(x2-x), abs(y2-y), 'plat'))
 
         if screen == 'gameScreen':
             player.lastY = player.y
@@ -62,7 +83,7 @@ def main():
             if player.jump:
                 player.y -= player.jumpVel
                 player.jumpVel -= 2
-                if player.jumpVel < 0:
+                if player.jumpVel < 0 and not keys[K_DOWN]:
                     for i in platforms:
                         check, val = i.hit(player.x, player.y+player.height/2-10, player.lastY)
                         if check:
@@ -100,15 +121,17 @@ def main():
                         player.jumpVel = 0
             if keys[K_SPACE]:
                 player.action = 'slash'
-            if keys[K_DOWN] and not player.jump:
+            if keys[K_DOWN] and not player.jump and player.y < 600:
                 player.jump = True
                 player.jumpVel = 0
-                player.y += 10
+                player.y += 50
                 player.lastY = player.y
             frameCounter += .5
             if frameCounter >= 54:
                 frameCounter = 0
-            drawGame(player, int(frameCounter), platforms)
+            if player.y > 666: #For some reason down key let them go through floor so idk this fixed it
+                    player.y = 666
+            drawGame(player, int(frameCounter), platforms, enemies, firstClick)
 
 main()
 
