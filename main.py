@@ -51,9 +51,9 @@ def main():
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100)
     platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'), 
-                Platform(100,SCREEN_HEIGHT-200,200,10, 'plat'),
-                Platform(100,SCREEN_HEIGHT-400,200,10, 'plat'),
-                Platform(400, SCREEN_HEIGHT-600, 200, 10, 'plat')
+                Platform(100,SCREEN_HEIGHT-200,200,30, 'plat'),
+                Platform(100,SCREEN_HEIGHT-400,200,30, 'plat'),
+                Platform(400, SCREEN_HEIGHT-600, 200, 30, 'plat')
                 ]
     enemies = [Dog(100,500)]
     playerSpeed = 10

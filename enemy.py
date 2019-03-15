@@ -22,3 +22,10 @@ class Dog:
         self.frameCounter += .2
         if self.frameCounter >= len(dogr):
             self.frameCounter = 0
+
+class Shooter:
+    def __init__(self, x, y):
+        self.x =x
+        self.y = y
+    def update(win):
+        pass
