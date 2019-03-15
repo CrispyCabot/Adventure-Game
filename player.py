@@ -4,7 +4,7 @@ from config import PATH, SIZE
 def loadSprite2(folder, amt, char): #Left images, flips them
     for i in range(0, amt):
         img = pygame.transform.flip(pygame.image.load(PATH +
-                                os.path.join('data', 'char', folder, 'tile00' + str(i)+'.png')), True, False)
+                                os.path.join('data', 'char', 'red', folder, 'tile00' + str(i)+'.png')), True, False)
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
@@ -12,7 +12,7 @@ def loadSprite2(folder, amt, char): #Left images, flips them
 def loadSprite(folder, amt, char): #Right images
     for i in range(0, amt):
         img = pygame.image.load(PATH +
-                                os.path.join('data', 'char', folder, 'tile00' + str(i)+'.png'))
+                                os.path.join('data', 'char', 'red', folder, 'tile00' + str(i)+'.png'))
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
